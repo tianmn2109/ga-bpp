@@ -74,10 +74,10 @@ struct phenotype {
     phenotype(int nb, int n, int c) {
         chrom.resize(nb);
         for (int i = 0; i < nb; i++) {
-            chrom[i].resize(nb);
+            chrom[i].resize(n);
             fill(chrom[i].begin(), chrom[i].end(), 0);
         }
-        cap.resize(n);
+        cap.resize(nb);
         fill(cap.begin(), cap.end(), c);
         num = 0;
     }
@@ -170,23 +170,36 @@ int crossOver(const struct phenotype p1, const struct phenotype p2, struct pheno
     for (i = 0; i < b.nb; i++) {
         fill(p.chrom[i].begin(), p.chrom[i].end(), 0);
     }
-    for (i = 0; i < p1.num / 2; i++) {
+    for (i = 0; i <= p1.num / 2; i++) {
         p.cap[i] = p1.cap[a[i]];
         p.chrom[i] = p1.chrom[a[i]];
     }
     // get the rest of objects
-    int flag;
     vector<int> rest;
     for (i = 0; i < b.n; i++) {
-        flag = 0;
-        for (j = p1.num / 2; j < p1.num; j++) {
+        for (j = p1.num / 2 + 1; j < p1.num; j++) {
             if (p1.chrom[a[j]][i] == 1)
-                flag = 1;
-        }
-        if (flag == 1) { 
-            rest.push_back(i);
+                rest.push_back(i);
         }
     }
+
+    /*
+     * for debugging the program
+    cout << "++" << endl;
+    for (int i = 0; i < p.chrom.size(); i++) {
+        for (int j = 0; j < p.chrom[i].size(); j++) {
+            if (j % 5 == 0) cout << " ";
+            cout << p.chrom[i][j];
+        }
+        cout << endl;
+    }
+    cout << "++" << endl;
+    for (int i = 0; i < rest.size(); i++) {
+        cout << rest[i] << " ";
+    }
+    cout << endl;
+    cout << "++" << endl;
+    */
 
     /* 
     // print rest
@@ -228,11 +241,9 @@ int crossOver(const struct phenotype p1, const struct phenotype p2, struct pheno
         vector<int> v;
         for (j = 0; j < b.n; j++) {
             if (p2.chrom[i][j] == 1) {
-                if (!rest.empty()) {
-                    it = find(rest.begin(), rest.end(), j);
-                    if (*it == j) {
-                        v.push_back(j);
-                    }
+                it = find(rest.begin(), rest.end(), j);
+                if (it != rest.end()) {
+                    v.push_back(j);
                 }
             }
         }
@@ -282,9 +293,9 @@ int crossOver(const struct phenotype p1, const struct phenotype p2, struct pheno
                 p.cap[j] -= pairs[i].second;
                 for (k = 0; k < objs[pairs[i].first].size(); k++) {
                     p.chrom[j][objs[pairs[i].first][k]] = 1;
-                    if (p.num < j)
-                        p.num = j;
                 }
+                if (p.num < j)
+                    p.num = j;
                 break;
             }
         }
@@ -444,13 +455,13 @@ void mutate(struct phenotype &p1, struct phenotype &p, struct bpp b)
     for (int i = 0; i < b.nb; i++) {
         fill(p.chrom[i].begin(), p.chrom[i].end(), 0);
     }
-    for (int i = 0; i < 0.3 * p1.num; i++) {
+    for (int i = 0; i <= p1.num*0.3; i++) {
         p.cap[i] = p1.cap[a[i]];
         p.chrom[i] = p1.chrom[a[i]];
     }
     // get the rest
     vector<int> rest;
-    for (int i = 0.3 * p1.num; i < p1.num; i++) {
+    for (int i = p1.num*0.3 + 1; i < p1.num; i++) {
         for (int j = 0; j < b.n; j++) {
             if (p1.chrom[a[i]][j] == 1) {
                 rest.push_back(j);

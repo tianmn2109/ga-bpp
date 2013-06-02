@@ -1,18 +1,21 @@
 #include "ga.hh"
+#include <assert.h>
 #include <iomanip>
 
-int main()
+int main(int argc, char **argv)
 {
     srand((unsigned)time(NULL));
     // initialization
     struct bpp b;
-    init(b, "./bin1data/N3C2W4_A.BPP", 350);
+    init(b, argv[1], 400);
 
     // baseline
     cout << "Baseline:" << endl;
-    cout << firstFit(b) << endl;
+    b.nb = firstFit(b) + 100; 
+    cout << b.nb - 100 << endl;
     cout << "#Objs: " << b.n << endl;
     cout << "#Bins: " << b.nb << endl;
+    
     // printWeight(b);
     // printCapacity(b);
 
@@ -48,13 +51,12 @@ int main()
         mutate(tmp[1], tmp[5], b);
 
         // check the validity of tmp
-        // cout << "TMP[0]: " << isValidSolution(tmp[0], b) << endl;
-        // cout << "TMP[1]: " << isValidSolution(tmp[1], b) << endl;
-        // cout << "TMP[2]: " << isValidSolution(tmp[2], b) << endl;
-        // cout << "TMP[3]: " << isValidSolution(tmp[3], b) << endl;
-        // cout << "TMP[4]: " << isValidSolution(tmp[4], b) << endl;
-        // cout << "TMP[5]: " << isValidSolution(tmp[5], b) << endl;
-        
+        assert(isValidSolution(tmp[0], b) == 1);
+        assert(isValidSolution(tmp[1], b) == 1);
+        assert(isValidSolution(tmp[2], b) == 1);
+        assert(isValidSolution(tmp[3], b) == 1);
+        assert(isValidSolution(tmp[4], b) == 1);
+        assert(isValidSolution(tmp[5], b) == 1);
         
         // select 2 best phenotype and add it to the population
         int best_so_far = b.nb;
